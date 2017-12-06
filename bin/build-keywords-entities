@@ -1,0 +1,32 @@
+#!/usr/bin/env node --max-old-space-size=4096
+
+require('../setup');
+const Listr = require('listr');
+
+const buildKeywordsEntities = require('../dist/buildKeywordsEntities').default;
+
+async function main() {
+  const steps = buildKeywordsEntities();
+  const { config } = steps;
+  const tasks = new Listr([
+    {
+      title: `${config.fetchRegistryFromDisk ? 'Load' : 'Download'} registry`,
+      task: () => steps.parsePackages,
+    },
+    {
+      title: 'Build smaller registry',
+      task: () => steps.filterPackages,
+    },
+    {
+      title: 'Build list of keywords entities',
+      task: () => steps.getEntities,
+    },
+    {
+      title: 'Save entity type to disk',
+      task: () => steps.saveEntities,
+    },
+  ]);
+  tasks.run();
+}
+
+main();

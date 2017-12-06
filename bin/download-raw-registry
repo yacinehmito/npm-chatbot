@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+mkdir -p $(dirname $0)/../data
+curl https://skimdb.npmjs.com/registry/_design/scratch/_view/byField > $(dirname $0)/../data/rawRegistry.json
